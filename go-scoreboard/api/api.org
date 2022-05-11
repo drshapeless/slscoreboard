@@ -1,0 +1,133 @@
+#+title: api
+
+* snooker
+** POST
+/api/v1/snooker
+#+begin_src json
+  {
+    "pass": "yot",
+    "winner": "player1",
+    "loser": "player2",
+    "diff": 3
+  }
+#+end_src
+
+*** response
+201 created
+#+begin_src json
+  {
+    "snooker": {
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "winner": "player1",
+      "loser": "player2",
+      "diff": 3
+    }
+  }
+#+end_src
+
+** GET
+/api/v1/snooker/:page
+
+This will get at most 20 records at specific page.
+#+begin_src json
+  {
+    "snookers": [{
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "winner": "player1",
+      "loser": "player2",
+      "diff": 3
+    }]
+  }
+#+end_src
+
+* dee
+** POST
+/api/v1/dee
+#+begin_src json
+  {
+    "pass": "yot",
+    "winner": "player1",
+    "loser1": "player2",
+    "loser1_card": 3,
+    "loser2": "player3",
+    "loser2_card": 4,
+    "loser3": "player4",
+    "loser3_card": 2
+  }
+#+end_src
+
+#+begin_src json
+  {
+    "dee": {
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "winner": "player1",
+      "loser1": "player2",
+      "loser1_card": 3,
+      "loser2": "player3",
+      "loser2_card": 4,
+      "loser3": "player4",
+      "loser3_card": 2
+    }
+  }
+#+end_src
+** GET
+/api/v1/dee/:page
+#+begin_src json
+  {
+    "dees": [{
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "winner": "player1",
+      "loser1": "player2",
+      "loser1_card": 3,
+      "loser2": "player3",
+      "loser2_card": 4,
+      "loser3": "player4",
+      "loser3_card": 2
+    }]
+  }
+#+end_src
+* landlord
+** POST
+/api/v1/landlord
+
+If landloard win, then win is true.
+#+begin_src json
+   {
+     "pass": "yot",
+     "landlord": "player1",
+     "farmer1": "player2",
+     "farmer2": "player3",
+     "win": true
+   }
+#+end_src
+
+#+begin_src json
+  {
+    "landlord": {
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "landlord": "player1",
+      "farmer1": "player2",
+      "farmer2": "player3",
+      "win": true
+    }
+  }
+#+end_src
+** GET
+/api/v1/landlord/:page
+#+begin_src json
+  {
+    "landlords": [{
+      "id": 1,
+      "date": "2021-12-12T14:00:07+08:00",
+      "landlord": "player1",
+      "farmer1": "player2",
+      "farmer2": "player3",
+      "win": true
+    }]
+  }
+#+end_src
