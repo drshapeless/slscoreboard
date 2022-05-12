@@ -8,13 +8,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/drshapeless/slscoreboard/go-scoreboard/internal/data"
 	"github.com/go-chi/chi"
 
 	_ "github.com/mattn/go-sqlite3"
+)
+
+var (
+	Pass = "yot"
 )
 
 type config struct {
@@ -95,6 +98,12 @@ func (app *application) routes() http.Handler {
 	r.Route(apiPrefix, func(r chi.Router) {
 		r.Post("/snooker", app.createSnookerHandler)
 		r.Get("/snooker/{page}", app.listSnookerHandler)
+
+		r.Post("/dee", app.createDeeHandler)
+		r.Get("/dee/{page}", app.listDeeHandler)
+
+		r.Post("/landlord", app.createLandlordHandler)
+		r.Get("/landlord", app.listLandlordHandler)
 	})
 
 	return r
@@ -120,5 +129,165 @@ func (app *application) listSnookerHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (app *application) createSnookerHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Pass   string `json:"pass"`
+		Winner string `json:"winner"`
+		Loser  string `json:"loser"`
+		Diff   int    `json:"diff"`
+	}
 
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	if input.Pass != Pass {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	snooker := &data.Snooker{
+		Winner: input.Winner,
+		Loser:  input.Loser,
+		Diff:   input.Diff,
+	}
+
+	err = app.models.Snookers.Insert(snooker)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"snooker": snooker}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) listDeeHandler(w http.ResponseWriter, r *http.Request) {
+	page, err := app.readPageParam(r)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	dees, maxPage, err := app.models.Snookers.GetAll(int(page))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"dees": dees, "max_page": maxPage}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) createDeeHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Pass       string `json:"pass"`
+		Winner     string `json:"winner"`
+		Loser1     string `json:"loser1"`
+		Loser1Card int    `json:"loser1_card"`
+		Loser2     string `json:"loser2"`
+		Loser2Card int    `json:"loser2_card"`
+		Loser3     string `json:"loser3"`
+		Loser3Card int    `json:"loser3_card`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	if input.Pass != Pass {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	dee := &data.Dee{
+		Winner:     input.Winner,
+		Loser1:     input.Loser1,
+		Loser1Card: input.Loser1Card,
+		Loser2:     input.Loser2,
+		Loser2Card: input.Loser2Card,
+		Loser3:     input.Loser3,
+		Loser3Card: input.Loser3Card,
+	}
+
+	err = app.models.Dees.Insert(dee)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"dee": dee}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) listLandlordHandler(w http.ResponseWriter, r *http.Request) {
+	page, err := app.readPageParam(r)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	landlords, maxPage, err := app.models.Landlords.GetAll(int(page))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"landlords": landlords, "max_page": maxPage}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) createLandlordHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Pass     string `json:"pass"`
+		Landlord string `json:"landlord"`
+		Farmer1  string `json:"farmer1"`
+		Farmer2  string `json:"farmer2"`
+		Win      bool   `json:"win"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	if input.Pass != Pass {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	var winInt = 0
+	if input.Win {
+		winInt = 1
+	}
+
+	landlord := &data.Landlord{
+		Landlord: input.Landlord,
+		Farmer1:  input.Farmer1,
+		Farmer2:  input.Farmer2,
+		Win:      winInt,
+	}
+
+	err = app.models.Landlords.Insert(landlord)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"landlord": landlord}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
