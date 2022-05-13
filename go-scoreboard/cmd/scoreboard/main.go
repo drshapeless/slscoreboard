@@ -55,6 +55,7 @@ func main() {
 		app.models = data.NewModels(db)
 	}
 
+	app.serve()
 }
 
 func openDB(path string) (*sql.DB, error) {

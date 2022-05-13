@@ -7,11 +7,11 @@ import (
 )
 
 type Snooker struct {
-	ID     int64     `json:"id"`
-	Winner string    `json:"winner"`
-	Loser  string    `json:"loser"`
-	Diff   int       `json:"diff"`
-	Date   time.Time `json:"date"`
+	ID     int64  `json:"id"`
+	Winner string `json:"winner"`
+	Loser  string `json:"loser"`
+	Diff   int    `json:"diff"`
+	Date   string `json:"date"`
 }
 
 type SnookerModel struct {
@@ -41,7 +41,9 @@ func (m *SnookerModel) GetAll(page int) ([]*Snooker, int, error) {
 	query := `
 SELECT COUNT(*) OVER(), id, winner, loser, diff, date
 FROM snookers
-LIMIT $1 OFFSET $2`
+ORDER BY id DESC
+LIMIT $1 OFFSET $2
+`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

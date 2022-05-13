@@ -7,15 +7,15 @@ import (
 )
 
 type Dee struct {
-	ID         int64     `json:"id"`
-	Winner     string    `json:"winner"`
-	Loser1     string    `json:"loser1"`
-	Loser1Card int       `json:"loser1_card"`
-	Loser2     string    `json:"loser2"`
-	Loser2Card int       `json:"loser2_card"`
-	Loser3     string    `json:"loser3"`
-	Loser3Card int       `json:"loser3_card"`
-	Date       time.Time `json:"date"`
+	ID         int64  `json:"id"`
+	Winner     string `json:"winner"`
+	Loser1     string `json:"loser1"`
+	Loser1Card int    `json:"loser1_card"`
+	Loser2     string `json:"loser2"`
+	Loser2Card int    `json:"loser2_card"`
+	Loser3     string `json:"loser3"`
+	Loser3Card int    `json:"loser3_card"`
+	Date       string `json:"date"`
 }
 
 type DeeModel struct {
@@ -53,6 +53,7 @@ func (m *DeeModel) GetAll(page int) ([]*Dee, int, error) {
 	query := `
 SELECT COUNT(*) OVER(), id, winner, loser1, loser1_card, loser2, loser2_card, loser3, loser3_card, date
 FROM dees
+ORDER BY id DESC
 LIMIT $1 OFFSET $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

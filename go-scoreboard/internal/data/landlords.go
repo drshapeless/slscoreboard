@@ -7,12 +7,12 @@ import (
 )
 
 type Landlord struct {
-	ID       int64     `json:"id"`
-	Landlord string    `json:"landlord"`
-	Farmer1  string    `json:"farmer1"`
-	Farmer2  string    `json:"farmer2"`
-	Win      int       `json:"win"`
-	Date     time.Time `json:"date"`
+	ID       int64  `json:"id"`
+	Landlord string `json:"landlord"`
+	Farmer1  string `json:"farmer1"`
+	Farmer2  string `json:"farmer2"`
+	Win      int    `json:"win"`
+	Date     string `json:"date"`
 }
 
 type LandlordModel struct {
@@ -22,7 +22,7 @@ type LandlordModel struct {
 func (m *LandlordModel) Insert(landlord *Landlord) error {
 	query := `
 INSERT INTO landlords (landlord, farmer1, farmer2, win)
-VALUES ($1, $2, $3)
+VALUES ($1, $2, $3, $4)
 RETURNING id, date`
 
 	args := []interface{}{landlord.Landlord, landlord.Farmer1, landlord.Farmer2, landlord.Win}
@@ -42,6 +42,7 @@ func (m *LandlordModel) GetAll(page int) ([]*Landlord, int, error) {
 	query := `
 SELECT COUNT(*) OVER(), id, landlord, farmer1, farmer2, win, date
 FROM landlords
+ORDER BY id DESC
 LIMIT $1 OFFSET $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
