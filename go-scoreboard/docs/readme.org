@@ -1,0 +1,5 @@
+#+title: readme
+
+The default port is 8000.
+
+The default path location is ~/scoreboard.db.

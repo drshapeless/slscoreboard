@@ -94,17 +94,17 @@ func (app *application) serve() error {
 func (app *application) routes() http.Handler {
 	r := chi.NewRouter()
 
-	apiPrefix := "/api/v1"
+	apiPrefix := "/v1"
 
 	r.Route(apiPrefix, func(r chi.Router) {
-		r.Post("/snooker", app.createSnookerHandler)
+		r.Post("/snooker/", app.createSnookerHandler)
 		r.Get("/snooker/{page}", app.listSnookerHandler)
 
-		r.Post("/dee", app.createDeeHandler)
+		r.Post("/dee/", app.createDeeHandler)
 		r.Get("/dee/{page}", app.listDeeHandler)
 
-		r.Post("/landlord", app.createLandlordHandler)
-		r.Get("/landlord", app.listLandlordHandler)
+		r.Post("/landlord/", app.createLandlordHandler)
+		r.Get("/landlord/{page}", app.listLandlordHandler)
 	})
 
 	return r
