@@ -13,6 +13,10 @@ install : ./bin/scoreboard
 migration :
 	sh ./scripts/migrations.sh
 
+install/init : ./init/scoreboard.init
+	cp ./init/scoreboard.init /etc/init.d/scoreboard
+	chmod +x /etc/init.d/scoreboard
+
 uninstall :
 	rm /usr/local/bin/scoreboard
 	rm ~/scoreboard.db
