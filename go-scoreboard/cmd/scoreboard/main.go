@@ -96,6 +96,9 @@ func (app *application) routes() http.Handler {
 
 	apiPrefix := "/v1"
 
+	r.NotFound(app.notFoundResponse)
+	r.MethodNotAllowed(app.methodNotAllowedResponse)
+
 	r.Route(apiPrefix, func(r chi.Router) {
 		r.Post("/snooker/", app.createSnookerHandler)
 		r.Get("/snooker/{page}", app.listSnookerHandler)
